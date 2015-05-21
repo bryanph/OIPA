@@ -36,11 +36,11 @@ class CountrySerializer(DynamicFieldsModelSerializer):
     def get_activities(self, obj):
         from api.activity.serializers import ActivitySerializer
         serializer = ActivitySerializer(utils.filter_activities_by_context(self, 'recipient_country', obj),
-                                        # context={'request': self.context['request']},
+                                        context={'request': self.context['request']},
                                         fields=(()),
                                         many=True)
 
-        print(serializer.data)
+
         return serializer.data 
 
     def get_aggregations(self, obj):
