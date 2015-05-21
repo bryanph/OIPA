@@ -5,6 +5,7 @@ from api.region.serializers import RegionSerializer
 from api.fields import JSONField
 from api.activity.aggregation import AggregationsSerializer
 
+from api.generics import utils
 
 class CountrySerializer(DynamicFieldsModelSerializer):
     class BasicCitySerializer(serializers.ModelSerializer):
@@ -25,12 +26,33 @@ class CountrySerializer(DynamicFieldsModelSerializer):
     capital_city = BasicCitySerializer()
     location = JSONField(source='center_longlat.json')
     polygon = JSONField()
-    activities = serializers.HyperlinkedIdentityField(
-        view_name='country-activities')
     indicators = serializers.HyperlinkedIdentityField(
         view_name='country-indicators')
     cities = serializers.HyperlinkedIdentityField(view_name='country-cities')
-    aggregations = AggregationsSerializer(source='activity_set', fields=())
+
+    activities = serializers.SerializerMethodField()
+    aggregations = serializers.SerializerMethodField()
+
+    def get_activities(self, obj):
+        from api.activity.serializers import ActivitySerializer
+        serializer = ActivitySerializer(utils.filter_activities_by_context(self, 'recipient_country', obj),
+                                        # context={'request': self.context['request']},
+                                        fields=(()),
+                                        many=True)
+
+        print(serializer.data)
+        return serializer.data 
+
+    def get_aggregations(self, obj):
+        from api.activity.serializers import ActivitySerializer
+        fields = tuple(utils.query_params_from_context(self.context).get('aggregations', str()).split(','))
+
+        serializer = AggregationsSerializer(
+            utils.filter_activities_by_context(self, 'recipient_country', obj),
+            fields=fields
+        )
+
+        return serializer.data
 
     class Meta:
         model = geodata.models.Country

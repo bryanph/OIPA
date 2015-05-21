@@ -5,8 +5,9 @@ from api.activity.views import ActivityList
 from rest_framework.generics import ListAPIView
 from rest_framework.generics import RetrieveAPIView
 
+from api.generics.views import PassContextMixin
 
-class SectorList(ListAPIView):
+class SectorList(PassContextMixin, ListAPIView):
     """
     Returns a list of IATI Sectors stored in OIPA.
 

@@ -38,3 +38,24 @@ def get_type_parameters(name, query_params):
         result_fields[type_name] = type_value
 
     return result_fields
+
+
+from api.activity.filters import ActivityFilter
+from iati.models import Activity
+
+def filter_activities_by_context(self, field, obj):
+    """
+    Given context, applies passed filters *obj* to *field* if they exist
+    """
+    # Circular imports!!!, must be refactored
+
+    activity_filter = ActivityFilter()
+
+    country_activities = Activity.objects.all().filter(**{ field: obj })
+
+    final_activities = activity_filter.filter_queryset(
+        country_activities,
+        query_params_from_context(self.context)
+    )
+
+    return final_activities

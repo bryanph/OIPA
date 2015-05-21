@@ -6,8 +6,9 @@ from rest_framework.generics import RetrieveAPIView
 from api.country.serializers import CountrySerializer
 from api.activity.views import ActivityList
 
+from api.generics.views import PassContextMixin
 
-class RegionList(ListAPIView):
+class RegionList(PassContextMixin, ListAPIView):
     """
     Returns a list of IATI Regions stored in OIPA.
 
