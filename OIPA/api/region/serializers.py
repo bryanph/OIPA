@@ -44,8 +44,7 @@ class RegionSerializer(DynamicFieldsModelSerializer):
     def get_activities(self, obj):
         from api.activity.serializers import ActivitySerializer
         serializer = ActivitySerializer(utils.filter_activities_by_context(self, 'recipient_region', obj),
-                                        # context={'request': self.context['request']},
-                                        fields=(()),
+                                        context={'request': self.context['request']},
                                         many=True)
 
         return serializer.data

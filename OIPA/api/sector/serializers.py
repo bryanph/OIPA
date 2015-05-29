@@ -22,9 +22,11 @@ class SectorSerializer(DynamicFieldsModelSerializer):
 
     def get_activities(self, obj):
         from api.activity.serializers import ActivitySerializer
+
+        fields = utils.query_params_from_context(self.context)
+
         serializer = ActivitySerializer(utils.filter_activities_by_context(self, 'sector', obj),
-                                        # context={'request': self.context['request']},
-                                        fields=(()),
+                                        context={'request': self.context['request']},
                                         many=True)
 
         return serializer.data

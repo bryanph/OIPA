@@ -52,6 +52,7 @@ def filter_activities_by_context(self, field, obj):
     activity_filter = ActivityFilter()
 
     country_activities = Activity.objects.all().filter(**{ field: obj })
+    # print(country_activities)
 
     final_activities = activity_filter.filter_queryset(
         country_activities,
